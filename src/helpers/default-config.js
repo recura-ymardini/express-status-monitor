@@ -30,6 +30,7 @@ module.exports = {
     rps: true,
     statusCodes: true,
   },
+  baseUrl: "http://localhost:8000",
   ignoreStartsWith: '/admin',
   healthChecks: [],
 };

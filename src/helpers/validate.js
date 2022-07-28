@@ -32,6 +32,9 @@ module.exports = config => {
       : defaultConfig.websocket;
   config.iframe =
     typeof config.iframe === 'boolean' ? config.iframe : defaultConfig.iframe;
+  config.baseUrl =
+    typeof config.baseUrl === 'string' ? config.baseUrl : defaultConfig.baseUrl;
+  
   config.chartVisibility =
     typeof config.chartVisibility === 'object'
       ? mungeChartVisibility(config.chartVisibility)

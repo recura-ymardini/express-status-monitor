@@ -22,6 +22,7 @@ const middlewareWrapper = config => {
     title: validatedConfig.title,
     port: validatedConfig.port,
     socketPath: validatedConfig.socketPath,
+    baseUrl: validatedConfig.baseUrl,
     bodyClasses,
     script: fs.readFileSync(path.join(__dirname, '/public/javascripts/app.js')),
     style: fs.readFileSync(path.join(__dirname, '/public/stylesheets/', validatedConfig.theme))
@@ -78,6 +79,15 @@ const middlewareWrapper = config => {
   middleware.pageRoute = (req, res) => {
     healthChecker(validatedConfig.healthChecks).then(results => {
       data.healthCheckResults = results;
+      if (validatedConfig.iframe) {
+        if (res.removeHeader) {
+          res.removeHeader('X-Frame-Options');
+        }
+
+        if (res.remove) {
+          res.remove('X-Frame-Options');
+        }
+      }
       res.send(render(data));
     });
   };

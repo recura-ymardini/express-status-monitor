@@ -1,16 +1,16 @@
 /* eslint strict: "off", init-declarations: "off" */
 
-'use strict';
+"use strict";
 
-const socketIo = require('socket.io');
-const gatherOsMetrics = require('./gather-os-metrics');
+const socketIo = require("socket.io");
+const gatherOsMetrics = require("./gather-os-metrics");
 
 let io;
 
 const addSocketEvents = (socket, config) => {
-  socket.emit('esm_start', config.spans);
-  socket.on('esm_change', () => {
-    socket.emit('esm_start', config.spans);
+  socket.emit("esm_start", config.spans);
+  socket.on("esm_change", () => {
+    socket.emit("esm_start", config.spans);
   });
 };
 
@@ -22,24 +22,27 @@ module.exports = (server, config) => {
       io = socketIo(server);
     }
 
-    io.on('connection', socket => {
+    io.on("connection", (socket) => {
       if (config.authorize) {
         config
           .authorize(socket)
-          .then(authorized => {
-            if (!authorized) socket.disconnect('unauthorized');
+          .then((authorized) => {
+            if (!authorized) socket.disconnect("unauthorized");
             else addSocketEvents(socket, config);
           })
-          .catch(() => socket.disconnect('unauthorized'));
+          .catch(() => socket.disconnect("unauthorized"));
       } else {
         addSocketEvents(socket, config);
       }
     });
 
-    config.spans.forEach(span => {
+    config.spans.forEach((span) => {
       span.os = [];
       span.responses = [];
-      const interval = setInterval(() => gatherOsMetrics(io, span), span.interval * 1000);
+      const interval = setInterval(
+        () => gatherOsMetrics(io, span),
+        span.interval * 1000
+      );
 
       // Don't keep Node.js process up
       interval.unref();
